@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Map and Text Editor</title>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+        body {
+            width: 800px;
+            font-family: Arial, sans-serif;
+            background-color: #fefefe;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        h1 {
+            text-align: left;
+            color: #333;
+            margin: 10px 0;
+            width: 100%;
+            padding-left: 10px;
+        }
+        #googleMap {
+            width: 100%;
+            height: 200px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            width: 100%;
+            max-width: 100%;
+            align-items: flex-start;
+        }
+        .left-pane {
+            padding: 10px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .editor {
+            border: 1px solid #ccc;
+            padding: 5px;
+            min-height: 150px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 5px 0;
+            text-align: left;
+            width: 100%;
+        }
+        .toolbar button,
+        .toolbar select,
+        .toolbar input[type="color"],
+        .toolbar input[type="number"] {
+            margin: 3px;
+            border: 1px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 3px;
+            border-radius: 4px;
+        }
+        .toolbar button:hover {
+            background-color: #f0f0f0;
+        }
+        .list-buttons {
+            display: flex;
+            gap: 5px;
+            margin: 3px;
+        }
+        .code-display {
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            padding: 5px;
+            background-color: #ffffff;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            height: 100px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .scrollable-table {
+            margin: 10px 0;
+            padding: 5px;
+            background-color: #ffffff;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+        th,
+        td {
+            padding: 5px;
+            text-align: left;
+            font-size: 12px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .text-container {
+            margin-top: 10px;
+        }
+        .text-container div {
+            border: 1px solid #ddd;
+            padding: 3px;
+            margin-bottom: 3px;
+            background-color: #f9f9f9;
+            word-wrap: break-word;
+            font-size: 12px;
+        }
+        .text-container div.selected {
+            border: 2px solid #007bff;
+        }
+        .additional-buttons {
+            margin-top: 10px;
+        }
+        .axalidivi {
+            margin-left: 873px;
+            margin-top: -750px;
+            height: 200px;
+            width: 601px;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Map and Text Editor</h1>
+
+    <div class="container">
+        <!-- Google Map Section -->
+        <div class="left-pane">
+            <!-- Google Map will be initialized here -->
+        </div>
+
+        <!-- Editor Section -->
+        <div class="left-pane">
+            <h2>Text Editor</h2>
+
+            <!-- Toolbar Section -->
+            <div class="toolbar">
+                <button onclick="formatText('bold')" title="Bold">
+                    <i class="fas fa-bold"></i>
+                </button>
+                <button onclick="formatText('italic')" title="Italic">
+                    <i class="fas fa-italic"></i>
+                </button>
+                <button onclick="formatText('underline')" title="Underline">
+                    <i class="fas fa-underline"></i>
+                </button>
+                <button onclick="formatText('strikeThrough')" title="Strikethrough">
+                    <i class="fas fa-strikethrough"></i>
+                </button>
+                <button onclick="formatText('justifyLeft')" title="Align Left">
+                    <i class="fas fa-align-left"></i>
+                </button>
+                <button onclick="formatText('justifyCenter')" title="Align Center">
+                    <i class="fas fa-align-center"></i>
+                </button>
+                <button onclick="formatText('justifyRight')" title="Align Right">
+                    <i class="fas fa-align-right"></i>
+                </button>
+                <select id="fontSize" onchange="changeFontSize()">
+                    <option value="12px">Small</option>
+                    <option value="16px">Medium</option>
+                    <option value="20px">Large</option>
+                    <option value="24px">Extra Large</option>
+                </select>
+                <input
+                    type="color"
+                    id="colorPicker"
+                    onchange="changeTextColor()"
+                    title="Text Color"
+                    value="#000000"
+                />
+                <input
+                    type="color"
+                    id="bgColorPicker"
+                    onchange="changeBackgroundColor()"
+                    title="Background Color"
+                    value="#ffffff"
+                />
+                <input
+                    type="color"
+                    id="buttonColorPicker"
+                    onchange="applyButtonColor()"
+                    title="Button Color"
+                    value="#ffffff"
+                />
+                <input
+                    type="color"
+                    id="pageBgColorPicker"
+                    onchange="changePageBackgroundColor()"
+                    title="Page Background Color"
+                    value="#fefefe"
+                />
+                <input type="number" id="listItemCount" min="1" value="3" title="Number of Items" style="width: 40px" />
+                <div class="list-buttons">
+                    <button onclick="insertNumberedList()" title="Insert Numbered List">
+                        <i class="fas fa-list-ol"></i>
+                    </button>
+                    <button onclick="insertBulletList()" title="Insert Bullet List">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                </div>
+                <input type="number" id="rowCount" min="1" value="3" title="Number of Rows" style="width: 40px" />
+                <input type="number" id="colCount" min="1" value="3" title="Number of Columns" style="width: 40px" />
+                <button onclick="insertTable()" title="Insert Table">
+                    <i class="fas fa-table"></i>
+                </button>
+                <button onclick="addMarkerFromEditor()" title="Add Marker from Editor">
+                    <i class="fas fa-map-marker-alt"></i>
+                </button>
+            </div>
+
+
+            <!-- Editor Section -->
+            <div class="editor" contenteditable="true"></div>
+            <div id="googleMap"></div>
+
+            <p>HTML CODE</p>
+            <div class="code-display" id="codeDisplay">
+                <!-- Display HTML code here -->
+            </div>
+
+            <!-- Text Container Section -->
+            <div id="textContainer" class="text-container">
+                <!-- Added text divs will appear here -->
+            </div>
+        </div>
+
+        <!-- Scrollable Table Section -->
+        <div class="scrollable-table">
+            <!-- You can insert your table content here -->
+        </div>
+    </div>
+
+    <script>
+        let map;
+
+        function getRandomLocation() {
+            var lat = Math.random() * 180 - 90;
+            var lng = Math.random() * 360 - 180;
+            return { lat: lat, lng: lng };
+        }
+
+        function myMap() {
+            map = new google.maps.Map(document.getElementById("googleMap"), {
+                center: { lat: 0, lng: 0 },
+                zoom: 2,
+            });
+        }
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            updateCodeDisplay();
+        }
+
+        function changeFontSize() {
+            const fontSize = document.getElementById("fontSize").value;
+            document.execCommand("fontSize", false, fontSize);
+            updateCodeDisplay();
+        }
+
+        function changeTextColor() {
+            const color = document.getElementById("colorPicker").value;
+            document.execCommand("foreColor", false, color);
+            updateCodeDisplay();
+        }
+
+        function changeBackgroundColor() {
+            const color = document.getElementById("bgColorPicker").value;
+            document.execCommand("backColor", false, color);
+            updateCodeDisplay();
+        }
+
+        function applyButtonColor() {
+            const color = document.getElementById("buttonColorPicker").value;
+            document.querySelectorAll(".toolbar button").forEach((button) => {
+                button.style.backgroundColor = color;
+            });
+        }
+
+        function changePageBackgroundColor() {
+            document.body.style.backgroundColor = document.getElementById("pageBgColorPicker").value;
+        }
+
+        function insertNumberedList() {
+            document.execCommand("insertOrderedList", false, null);
+            updateCodeDisplay();
+        }
+
+        function insertBulletList() {
+            document.execCommand("insertUnorderedList", false, null);
+            updateCodeDisplay();
+        }
+
+        function insertTable() {
+            const rows = document.getElementById("rowCount").value;
+            const cols = document.getElementById("colCount").value;
+            let table = "<table>";
+            for (let i = 0; i < rows; i++) {
+                table += "<tr>";
+                for (let j = 0; j < cols; j++) {
+                    table += "<td></td>";
+                }
+                table += "</tr>";
+            }
+            table += "</table>";
+            document.execCommand("insertHTML", false, table);
+            updateCodeDisplay();
+        }
+
+        function addMarkerFromEditor() {
+            const { lat, lng } = getRandomLocation();
+            const marker = new google.maps.Marker({
+                position: { lat, lng },
+                map: map,
+            });
+            map.setCenter(marker.getPosition());
+            updateCodeDisplay();
+        }
+
+        function updateCodeDisplay() {
+            const html = document.querySelector(".editor").innerHTML;
+            document.getElementById("codeDisplay").textContent = html;
+        }
+
+        function addText() {
+            const div = document.createElement("div");
+            div.textContent = "New Text";
+            document.getElementById("textContainer").appendChild(div);
+        }
+
+        function deleteSelectedText() {
+            document.execCommand("delete", false, null);
+            updateCodeDisplay();
+        }
+
+        function undoLastAction() {
+            document.execCommand("undo", false, null);
+            updateCodeDisplay();
+        }
+
+        function addDivToAxalidivi() {
+            const axalidivi = document.querySelector(".axalidivi");
+            const newDiv = document.createElement("div");
+            newDiv.textContent = "New Div";
+            newDiv.style.border = "1px solid #ffffff";
+            newDiv.style.padding = "10px";
+            newDiv.style.margin = "5px";
+            newDiv.style.backgroundColor = "#0056b3";
+            axalidivi.appendChild(newDiv);
+        }
+
+        window.onload = function () {
+            myMap();
+        };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+    <div class="axalidivi">            <div class="additional-buttons">
+                <button onclick="addText()" title="Add Text">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button onclick="deleteSelectedText()" title="Delete Selected Text">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button onclick="undoLastAction()" title="Undo Last Action">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button onclick="addDivToAxalidivi()" title="Add Div to Axalidivi">
+                    <i class="fas fa-plus-square"></i>
+                </button>
+            </div></div>
+</body>
+</html>
